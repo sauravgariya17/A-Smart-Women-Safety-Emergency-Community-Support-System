@@ -75,6 +75,16 @@ CREATE TABLE journeys (
     CONSTRAINT fk_journey_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- Which of the user's trusted contacts were selected for THIS specific
+-- journey. Not every trusted contact needs to see every journey.
+CREATE TABLE journey_trusted_contacts (
+    journey_id      BIGINT NOT NULL,
+    contact_id      BIGINT NOT NULL,
+    PRIMARY KEY (journey_id, contact_id),
+    CONSTRAINT fk_jtc_journey FOREIGN KEY (journey_id) REFERENCES journeys(journey_id) ON DELETE CASCADE,
+    CONSTRAINT fk_jtc_contact FOREIGN KEY (contact_id) REFERENCES trusted_contacts(contact_id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 -- ------------------------------------------------------------
 -- 5. SOS ALERTS
 -- ------------------------------------------------------------
@@ -121,9 +131,13 @@ CREATE TABLE community_posts (
     anonymous_handle_snapshot   VARCHAR(50) NOT NULL,  -- what the public actually sees
     title                       VARCHAR(200) NOT NULL,
     body                        VARCHAR(5000) NOT NULL,
-    tag                         VARCHAR(40) NULL,
+    tag                         VARCHAR(40) NULL,               -- category/flair, e.g. HARASSMENT, SAFETY_TIP
+    area_label                  VARCHAR(120) NULL,               -- coarse area only, e.g. "Near Main Gate" - never exact GPS
     ai_toxicity_score           DECIMAL(4,3) NULL,
     moderation_status           ENUM('PUBLISHED','PENDING_REVIEW','REMOVED') NOT NULL DEFAULT 'PUBLISHED',
+    upvote_count                INT NOT NULL DEFAULT 0,
+    downvote_count              INT NOT NULL DEFAULT 0,
+    comment_count               INT NOT NULL DEFAULT 0,
     created_at                  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_post_author FOREIGN KEY (author_user_id) REFERENCES users(user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -137,6 +151,9 @@ CREATE TABLE comments (
     author_user_id              BIGINT NOT NULL,      -- INTERNAL ONLY, same rule as posts
     anonymous_handle_snapshot   VARCHAR(50) NOT NULL,
     body                        VARCHAR(2000) NOT NULL,
+    moderation_status           ENUM('PUBLISHED','PENDING_REVIEW','REMOVED') NOT NULL DEFAULT 'PUBLISHED',
+    upvote_count                INT NOT NULL DEFAULT 0,
+    downvote_count              INT NOT NULL DEFAULT 0,
     created_at                  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_comment_post FOREIGN KEY (post_id) REFERENCES community_posts(post_id) ON DELETE CASCADE,
     CONSTRAINT fk_comment_author FOREIGN KEY (author_user_id) REFERENCES users(user_id) ON DELETE CASCADE
@@ -165,10 +182,12 @@ CREATE TABLE moderation_queue (
     target_id       BIGINT NOT NULL,
     reason          VARCHAR(500) NULL,
     flagged_by      ENUM('AI','USER') NOT NULL,
+    reporter_user_id BIGINT NULL,             -- internal only; NEVER exposed via any API, anti-abuse tracking
     status          ENUM('PENDING','APPROVED','REMOVED') NOT NULL DEFAULT 'PENDING',
     reviewed_by     BIGINT NULL,
     reviewed_at     TIMESTAMP NULL,
     created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_queue_reporter FOREIGN KEY (reporter_user_id) REFERENCES users(user_id) ON DELETE SET NULL,
     CONSTRAINT fk_queue_reviewer FOREIGN KEY (reviewed_by) REFERENCES users(user_id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
@@ -209,6 +228,19 @@ CREATE TABLE safe_zones (
     lng             DECIMAL(10,7) NOT NULL,
     description     VARCHAR(300) NULL
 ) ENGINE=InnoDB;
+
+-- Seed data: approximate GEHU Clement Town campus reference points.
+-- Coordinates are centered on the publicly listed campus location
+-- (30.2675 N, 77.9959 E per OSM/Wikipedia). Adjust to exact on-ground
+-- coordinates using Google Maps before a real deployment - these are
+-- realistic placeholders for demo/viva purposes.
+INSERT INTO safe_zones (name, type, lat, lng, description) VALUES
+('GEHU Main Gate Security Post', 'SECURITY_POST', 30.2675000, 77.9959000, 'Primary campus entrance, security staffed 24x7'),
+('Hostel Warden Office - Girls Hostel', 'WARDEN_OFFICE', 30.2680000, 77.9965000, 'Warden on duty, first point of contact for hostel residents'),
+('Campus Help Desk - Admin Block', 'HELPDESK', 30.2672000, 77.9955000, 'General enquiries and emergency assistance desk'),
+('Library Block', 'SAFE_LANDMARK', 30.2678000, 77.9962000, 'Well-lit, staffed until 9 PM'),
+('Main Internal Road (Gate to Academic Block)', 'MAIN_ROUTE', 30.2676000, 77.9960000, 'Well-lit primary walking route, preferred after dark');
+
 
 -- ------------------------------------------------------------
 -- Helpful indexes
