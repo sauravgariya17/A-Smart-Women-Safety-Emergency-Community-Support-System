@@ -46,6 +46,7 @@ public class SecurityConfig {
                 // Public endpoints
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/map/**").permitAll()
+                .requestMatchers("/api/journeys/track/**").permitAll() // token IS the credential, see JourneyController
 
                 // Admin-only
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
