@@ -33,6 +33,15 @@ app:
   cors:
     allowed-origins: "http://localhost:5173,http://localhost:3000"
 
+  map:
+    # GEHU Clement Town campus + a small surrounding radius ONLY.
+    # Any coordinate outside this box is rejected by JourneyService/MapService -
+    # this is what keeps the platform campus-scoped, not just a UI convention.
+    center-lat: 30.2675
+    center-lng: 77.9959
+    bounds-radius-km: 2.0
+    journey-checkin-grace-minutes: 15
+
 logging:
   level:
     com.gehu.safety: DEBUG
