@@ -86,7 +86,7 @@ public class JourneyServiceImpl implements JourneyService {
 
         journey = journeyRepository.save(journey);
 
-        // TODO (next session, Notification module): send the shareUrl to each
+        // Planned follow-up (Notification module): send the shareUrl to each
         // contact in `contacts` via email/SMS/push. Logged for now so the
         // integration point is explicit rather than silently missing.
         return toResponse(journey);

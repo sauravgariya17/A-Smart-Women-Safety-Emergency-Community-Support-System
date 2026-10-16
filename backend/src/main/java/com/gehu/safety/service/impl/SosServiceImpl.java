@@ -225,7 +225,7 @@ public class SosServiceImpl implements SosService {
                 .id(alert.getId())
                 .requesterUserId(alert.getUser().getId())
                 .requesterName(alert.getUser().getName())
-                .requesterPhone(alert.getUser().getPhoneEncrypted()) // TODO: AES-decrypt once Stage 1's TODO is implemented
+                .requesterPhone(alert.getUser().getPhoneEncrypted()) // AES decryption is planned after Stage 1 adds encrypted phone storage.
                 .category(alert.getCategory())
                 .lat(alert.getLat())
                 .lng(alert.getLng())

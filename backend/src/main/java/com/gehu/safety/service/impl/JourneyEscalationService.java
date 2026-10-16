@@ -20,7 +20,7 @@ import java.util.List;
  *
  * CURRENT SCOPE: marks the journey ESCALATED and logs it. Full behaviour
  * (creating an SOSAlert record + notifying trusted contacts) is wired in
- * once the SOS and Notification modules exist - see the TODO below. This
+ * once the SOS and Notification modules exist - see the planned follow-up below. This
  * keeps the integration seam explicit rather than silently absent.
  */
 @Service
@@ -48,7 +48,7 @@ public class JourneyEscalationService {
             journey.setStatus(JourneyStatus.ESCALATED);
             journeyRepository.save(journey);
 
-            // TODO (SOS module + Notification module, next sessions):
+            // Planned integration with the SOS and Notification modules:
             //   1. Create an SOSAlert record for journey.getUser() at
             //      journey.getLastKnownLat()/Lng()
             //   2. Notify journey.getNotifiedContacts() and campus security

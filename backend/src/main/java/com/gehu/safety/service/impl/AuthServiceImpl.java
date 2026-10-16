@@ -61,10 +61,10 @@ public class AuthServiceImpl implements AuthService {
                 .name(request.getName())
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
-                .phoneEncrypted(request.getPhone()) // TODO Stage 2: wrap with AES AttributeConverter
+                .phoneEncrypted(request.getPhone()) // Stage 2 plan: wrap with AES AttributeConverter
                 .role(Role.USER)
                 .anonymousHandle(handleGenerator.generateUnique())
-                .verified(false) // TODO Stage 2: wire up email OTP verification
+                .verified(false) // Stage 2 plan: wire up email OTP verification
                 .active(true)
                 .build();
 

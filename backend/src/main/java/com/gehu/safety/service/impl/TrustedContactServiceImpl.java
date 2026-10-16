@@ -46,7 +46,7 @@ public class TrustedContactServiceImpl implements TrustedContactService {
                 .email(request.getEmail())
                 .relation(request.getRelation())
                 .priority(request.getPriority() != null ? request.getPriority() : 1)
-                .verified(false) // TODO Stage 2: send verification link/OTP to the contact
+                .verified(false) // Stage 2 plan: send verification link/OTP to the contact
                 .build();
 
         trustedContactRepository.save(contact);

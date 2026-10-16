@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * and in SecurityConfig's route rules (/api/moderation/** -> hasAnyRole).
  */
 @RestController
-@RequestMapping("/api/moderation")
+@RequestMapping("/api/moderation/queue")
 @PreAuthorize("hasAnyRole('MODERATOR','ADMIN')")
 public class ModerationController {
 
@@ -26,7 +26,7 @@ public class ModerationController {
     public ModerationController(ModerationService moderationService) {
         this.moderationService = moderationService;
     }
-    @GetMapping("/queue")
+    @GetMapping
     public ApiResponse<PageResponse<ModerationQueueItemResponse>> getQueue(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -34,7 +34,7 @@ public class ModerationController {
         return ApiResponse.success(moderationService.getPendingQueue(page, size));
     }
 
-    @PostMapping("/queue/{queueId}/review")
+    @PostMapping("/{queueId}/review")
     public ApiResponse<Void> reviewItem(
             @AuthenticationPrincipal UserPrincipal principal,
             @PathVariable Long queueId,
