@@ -11,9 +11,6 @@ import java.time.LocalDateTime;
 })
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Vote {
 
     @Id
@@ -41,5 +38,27 @@ public class Vote {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public Vote(Long id, User user, TargetType targetType, Long targetId, LocalDateTime createdAt) {
+        this.id = id;
+        this.user = user;
+        this.targetType = targetType;
+        this.targetId = targetId;
+        this.createdAt = createdAt;
+    }
+
+    public Vote() {}
+
+    public static Builder builder() { return new Builder(); }
+    public static class Builder {
+        private final Vote value = new Vote();
+        public Builder id(Long value) { this.value.id = value; return this; }
+        public Builder user(User value) { this.value.user = value; return this; }
+        public Builder targetType(TargetType value) { this.value.targetType = value; return this; }
+        public Builder targetId(Long value) { this.value.targetId = value; return this; }
+        public Builder voteValue(Integer value) { this.value.voteValue = value; return this; }
+        public Builder createdAt(LocalDateTime value) { this.value.createdAt = value; return this; }
+        public Vote build() { return value; }
     }
 }

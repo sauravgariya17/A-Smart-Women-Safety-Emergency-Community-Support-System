@@ -1,8 +1,6 @@
 package com.gehu.safety.dto.response;
 
 import com.gehu.safety.entity.Role;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,8 +13,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
+
 public class UserResponse {
     private Long id;
     private String name;
@@ -24,4 +21,24 @@ public class UserResponse {
     private String anonymousHandle;
     private Role role;
     private boolean verified;
+
+    public UserResponse(Long id, String name, String email, String anonymousHandle, Role role, boolean verified) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.anonymousHandle = anonymousHandle;
+        this.role = role;
+        this.verified = verified;
+    }
+    public static Builder builder() { return new Builder(); }
+    public static class Builder {
+        private final UserResponse value = new UserResponse();
+        public Builder id(Long value) { this.value.id = value; return this; }
+        public Builder name(String value) { this.value.name = value; return this; }
+        public Builder email(String value) { this.value.email = value; return this; }
+        public Builder anonymousHandle(String value) { this.value.anonymousHandle = value; return this; }
+        public Builder role(Role value) { this.value.role = value; return this; }
+        public Builder verified(boolean value) { this.value.verified = value; return this; }
+        public UserResponse build() { return value; }
+    }
 }

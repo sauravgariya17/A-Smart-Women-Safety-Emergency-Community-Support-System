@@ -5,15 +5,17 @@ import com.gehu.safety.entity.User;
 import com.gehu.safety.exception.ResourceNotFoundException;
 import com.gehu.safety.repository.UserRepository;
 import com.gehu.safety.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
     @Override
     public UserResponse getCurrentUserProfile(Long userId) {
         User user = userRepository.findById(userId)

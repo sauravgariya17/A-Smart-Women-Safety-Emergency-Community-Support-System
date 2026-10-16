@@ -14,9 +14,6 @@ import java.time.LocalDateTime;
 @Table(name = "refresh_tokens")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class RefreshToken {
 
     @Id
@@ -35,7 +32,6 @@ public class RefreshToken {
     private LocalDateTime expiresAt;
 
     @Column(name = "revoked", nullable = false)
-    @Builder.Default
     private boolean revoked = false;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -44,5 +40,28 @@ public class RefreshToken {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public RefreshToken(Long id, User user, String token, LocalDateTime expiresAt, boolean revoked, LocalDateTime createdAt) {
+        this.id = id;
+        this.user = user;
+        this.token = token;
+        this.expiresAt = expiresAt;
+        this.revoked = revoked;
+        this.createdAt = createdAt;
+    }
+
+    public RefreshToken() {}
+
+    public static Builder builder() { return new Builder(); }
+    public static class Builder {
+        private final RefreshToken value = new RefreshToken();
+        public Builder id(Long value) { this.value.id = value; return this; }
+        public Builder user(User value) { this.value.user = value; return this; }
+        public Builder token(String value) { this.value.token = value; return this; }
+        public Builder expiresAt(LocalDateTime value) { this.value.expiresAt = value; return this; }
+        public Builder revoked(boolean value) { this.value.revoked = value; return this; }
+        public Builder createdAt(LocalDateTime value) { this.value.createdAt = value; return this; }
+        public RefreshToken build() { return value; }
     }
 }

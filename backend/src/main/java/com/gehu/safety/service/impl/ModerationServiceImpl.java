@@ -10,7 +10,6 @@ import com.gehu.safety.repository.CommunityPostRepository;
 import com.gehu.safety.repository.ModerationQueueRepository;
 import com.gehu.safety.repository.UserRepository;
 import com.gehu.safety.service.ModerationService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
-@RequiredArgsConstructor
 public class ModerationServiceImpl implements ModerationService {
 
     private static final int PREVIEW_LENGTH = 150;
@@ -31,6 +29,16 @@ public class ModerationServiceImpl implements ModerationService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
+
+    public ModerationServiceImpl(ModerationQueueRepository moderationQueueRepository,
+            CommunityPostRepository postRepository,
+            CommentRepository commentRepository,
+            UserRepository userRepository) {
+        this.moderationQueueRepository = moderationQueueRepository;
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
+        this.userRepository = userRepository;
+    }
     @Override
     public PageResponse<ModerationQueueItemResponse> getPendingQueue(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));

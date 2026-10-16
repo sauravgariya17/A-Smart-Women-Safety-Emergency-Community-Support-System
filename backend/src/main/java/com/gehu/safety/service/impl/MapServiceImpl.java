@@ -5,19 +5,23 @@ import com.gehu.safety.dto.response.MapConfigResponse;
 import com.gehu.safety.dto.response.SafeZoneResponse;
 import com.gehu.safety.repository.SafeZoneRepository;
 import com.gehu.safety.service.MapService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class MapServiceImpl implements MapService {
 
     private final MapScopeProperties mapScopeProperties;
     private final SafeZoneRepository safeZoneRepository;
 
+
+    public MapServiceImpl(MapScopeProperties mapScopeProperties,
+            SafeZoneRepository safeZoneRepository) {
+        this.mapScopeProperties = mapScopeProperties;
+        this.safeZoneRepository = safeZoneRepository;
+    }
     @Override
     public MapConfigResponse getMapConfig() {
         return MapConfigResponse.builder()

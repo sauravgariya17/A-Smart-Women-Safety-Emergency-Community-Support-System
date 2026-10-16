@@ -6,18 +6,24 @@ import com.gehu.safety.repository.CommentRepository;
 import com.gehu.safety.repository.CommunityPostRepository;
 import com.gehu.safety.repository.VoteRepository;
 import com.gehu.safety.service.VoteService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class VoteServiceImpl implements VoteService {
 
     private final VoteRepository voteRepository;
     private final CommunityPostRepository postRepository;
     private final CommentRepository commentRepository;
 
+
+    public VoteServiceImpl(VoteRepository voteRepository,
+            CommunityPostRepository postRepository,
+            CommentRepository commentRepository) {
+        this.voteRepository = voteRepository;
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
+    }
     @Override
     @Transactional
     public int castVote(Long userId, TargetType targetType, Long targetId, int voteValue) {

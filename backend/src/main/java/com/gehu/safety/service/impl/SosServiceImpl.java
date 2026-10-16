@@ -14,7 +14,6 @@ import com.gehu.safety.repository.UserRepository;
 import com.gehu.safety.service.AuditService;
 import com.gehu.safety.service.NotificationService;
 import com.gehu.safety.service.SosService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +22,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class SosServiceImpl implements SosService {
 
     private static final List<SosStatus> NON_TERMINAL = List.of(
@@ -38,6 +36,20 @@ public class SosServiceImpl implements SosService {
     private final NotificationService notificationService;
     private final AuditService auditService;
 
+
+    public SosServiceImpl(SosAlertRepository sosAlertRepository,
+            UserRepository userRepository,
+            TrustedContactRepository trustedContactRepository,
+            SosProperties sosProperties,
+            NotificationService notificationService,
+            AuditService auditService) {
+        this.sosAlertRepository = sosAlertRepository;
+        this.userRepository = userRepository;
+        this.trustedContactRepository = trustedContactRepository;
+        this.sosProperties = sosProperties;
+        this.notificationService = notificationService;
+        this.auditService = auditService;
+    }
     @Override
     @Transactional
     public SosResponse trigger(Long userId, TriggerSosRequest request) {

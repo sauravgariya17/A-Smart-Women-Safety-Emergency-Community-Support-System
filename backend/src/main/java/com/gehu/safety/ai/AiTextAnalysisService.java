@@ -2,7 +2,6 @@ package com.gehu.safety.ai;
 
 import com.gehu.safety.ai.dto.IncidentAnalysis;
 import com.gehu.safety.ai.dto.ModerationResult;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
  * IncidentReportService and Community post/comment services call this.
  */
 @Service
-@RequiredArgsConstructor
 public class AiTextAnalysisService {
 
     private final IncidentClassifier classifier;
@@ -19,6 +17,16 @@ public class AiTextAnalysisService {
     private final ContentModerationAnalyzer moderationAnalyzer;
     private final IncidentSummarizer summarizer;
 
+
+    public AiTextAnalysisService(IncidentClassifier classifier,
+            PriorityAssessor priorityAssessor,
+            ContentModerationAnalyzer moderationAnalyzer,
+            IncidentSummarizer summarizer) {
+        this.classifier = classifier;
+        this.priorityAssessor = priorityAssessor;
+        this.moderationAnalyzer = moderationAnalyzer;
+        this.summarizer = summarizer;
+    }
     public IncidentAnalysis analyzeIncident(String description) {
         var classification = classifier.classify(description);
         var priority = priorityAssessor.assess(description, classification.getCategory());

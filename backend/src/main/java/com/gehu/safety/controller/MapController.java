@@ -4,7 +4,6 @@ import com.gehu.safety.dto.response.ApiResponse;
 import com.gehu.safety.dto.response.MapConfigResponse;
 import com.gehu.safety.dto.response.SafeZoneResponse;
 import com.gehu.safety.service.MapService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,11 +18,14 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/map")
-@RequiredArgsConstructor
 public class MapController {
 
     private final MapService mapService;
 
+
+    public MapController(MapService mapService) {
+        this.mapService = mapService;
+    }
     @GetMapping("/config")
     public ApiResponse<MapConfigResponse> getMapConfig() {
         return ApiResponse.success(mapService.getMapConfig());

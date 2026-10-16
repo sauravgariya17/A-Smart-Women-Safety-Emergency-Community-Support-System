@@ -6,17 +6,21 @@ import com.gehu.safety.exception.ResourceNotFoundException;
 import com.gehu.safety.repository.AuditLogRepository;
 import com.gehu.safety.repository.UserRepository;
 import com.gehu.safety.service.AuditService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class AuditServiceImpl implements AuditService {
 
     private final AuditLogRepository auditLogRepository;
     private final UserRepository userRepository;
 
+
+    public AuditServiceImpl(AuditLogRepository auditLogRepository,
+            UserRepository userRepository) {
+        this.auditLogRepository = auditLogRepository;
+        this.userRepository = userRepository;
+    }
     @Override
     @Transactional
     public void record(Long actorUserId, String actionType, String targetType, Long targetId, String reason) {

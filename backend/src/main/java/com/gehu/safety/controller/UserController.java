@@ -4,7 +4,6 @@ import com.gehu.safety.dto.response.ApiResponse;
 import com.gehu.safety.dto.response.UserResponse;
 import com.gehu.safety.security.UserPrincipal;
 import com.gehu.safety.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,11 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/users")
-@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
     /**
      * Returns the caller's OWN full profile (includes real name).
      * This is safe because it only ever returns data about the authenticated

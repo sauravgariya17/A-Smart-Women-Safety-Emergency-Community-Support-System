@@ -1,7 +1,6 @@
 package com.gehu.safety.service;
 
 import com.gehu.safety.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
@@ -12,7 +11,6 @@ import java.security.SecureRandom;
  * It carries no link to the user's real name, email, or roll number.
  */
 @Component
-@RequiredArgsConstructor
 public class AnonymousHandleGenerator {
 
     private static final String[] ADJECTIVES = {
@@ -20,6 +18,10 @@ public class AnonymousHandleGenerator {
     };
 
     private final UserRepository userRepository;
+
+    public AnonymousHandleGenerator(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
     private final SecureRandom random = new SecureRandom();
 
     public String generateUnique() {

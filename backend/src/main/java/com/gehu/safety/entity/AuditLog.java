@@ -15,9 +15,6 @@ import java.time.LocalDateTime;
 @Table(name = "audit_logs")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class AuditLog {
 
     @Id
@@ -47,5 +44,28 @@ public class AuditLog {
     @PrePersist
     protected void onCreate() {
         this.timestamp = LocalDateTime.now();
+    }
+
+    public AuditLog(Long id, User actor, Long targetId, String reason, LocalDateTime timestamp) {
+        this.id = id;
+        this.actor = actor;
+        this.targetId = targetId;
+        this.reason = reason;
+        this.timestamp = timestamp;
+    }
+
+    public AuditLog() {}
+
+    public static Builder builder() { return new Builder(); }
+    public static class Builder {
+        private final AuditLog value = new AuditLog();
+        public Builder id(Long value) { this.value.id = value; return this; }
+        public Builder actor(User value) { this.value.actor = value; return this; }
+        public Builder actionType(String value) { this.value.actionType = value; return this; }
+        public Builder targetType(String value) { this.value.targetType = value; return this; }
+        public Builder targetId(Long value) { this.value.targetId = value; return this; }
+        public Builder reason(String value) { this.value.reason = value; return this; }
+        public Builder timestamp(LocalDateTime value) { this.value.timestamp = value; return this; }
+        public AuditLog build() { return value; }
     }
 }

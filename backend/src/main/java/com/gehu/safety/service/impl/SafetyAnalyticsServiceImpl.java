@@ -3,7 +3,6 @@ package com.gehu.safety.service.impl;
 import com.gehu.safety.dto.response.SafetyAnalyticsResponse;
 import com.gehu.safety.repository.IncidentReportRepository;
 import com.gehu.safety.service.SafetyAnalyticsService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,13 +27,16 @@ import java.util.stream.Collectors;
  * caveat into every API response so the frontend cannot drop it by accident.
  */
 @Service
-@RequiredArgsConstructor
 public class SafetyAnalyticsServiceImpl implements SafetyAnalyticsService {
 
     private static final int MIN_GROUP_SIZE = 3; // k-anonymity threshold for area suppression
 
     private final IncidentReportRepository incidentReportRepository;
 
+
+    public SafetyAnalyticsServiceImpl(IncidentReportRepository incidentReportRepository) {
+        this.incidentReportRepository = incidentReportRepository;
+    }
     @Override
     public SafetyAnalyticsResponse getAnalytics(int windowDays) {
         LocalDateTime since = LocalDateTime.now().minusDays(windowDays);

@@ -13,7 +13,6 @@ import com.gehu.safety.repository.ModerationQueueRepository;
 import com.gehu.safety.repository.UserRepository;
 import com.gehu.safety.service.CommunityPostService;
 import com.gehu.safety.service.VoteService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class CommunityPostServiceImpl implements CommunityPostService {
 
     private static final int EXCERPT_LENGTH = 200;
@@ -33,6 +31,18 @@ public class CommunityPostServiceImpl implements CommunityPostService {
     private final AiTextAnalysisService aiTextAnalysisService;
     private final VoteService voteService;
 
+
+    public CommunityPostServiceImpl(CommunityPostRepository postRepository,
+            UserRepository userRepository,
+            ModerationQueueRepository moderationQueueRepository,
+            AiTextAnalysisService aiTextAnalysisService,
+            VoteService voteService) {
+        this.postRepository = postRepository;
+        this.userRepository = userRepository;
+        this.moderationQueueRepository = moderationQueueRepository;
+        this.aiTextAnalysisService = aiTextAnalysisService;
+        this.voteService = voteService;
+    }
     @Override
     @Transactional
     public PostDetailResponse createPost(Long authorUserId, CreatePostRequest request) {

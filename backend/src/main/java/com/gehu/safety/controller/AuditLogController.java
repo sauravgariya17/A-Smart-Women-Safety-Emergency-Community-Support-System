@@ -4,7 +4,6 @@ import com.gehu.safety.dto.response.ApiResponse;
 import com.gehu.safety.dto.response.AuditLogResponse;
 import com.gehu.safety.dto.response.PageResponse;
 import com.gehu.safety.service.AuditQueryService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,12 +14,15 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/admin/audit-logs")
-@RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
 public class AuditLogController {
 
     private final AuditQueryService auditQueryService;
 
+
+    public AuditLogController(AuditQueryService auditQueryService) {
+        this.auditQueryService = auditQueryService;
+    }
     @GetMapping
     public ApiResponse<PageResponse<AuditLogResponse>> search(
             @RequestParam(required = false) String actionType,

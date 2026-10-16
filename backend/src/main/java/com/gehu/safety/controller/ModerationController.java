@@ -7,7 +7,6 @@ import com.gehu.safety.dto.response.PageResponse;
 import com.gehu.safety.security.UserPrincipal;
 import com.gehu.safety.service.ModerationService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +17,15 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/moderation")
-@RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('MODERATOR','ADMIN')")
 public class ModerationController {
 
     private final ModerationService moderationService;
 
+
+    public ModerationController(ModerationService moderationService) {
+        this.moderationService = moderationService;
+    }
     @GetMapping("/queue")
     public ApiResponse<PageResponse<ModerationQueueItemResponse>> getQueue(
             @RequestParam(defaultValue = "0") int page,

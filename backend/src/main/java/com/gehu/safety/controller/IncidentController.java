@@ -8,7 +8,6 @@ import com.gehu.safety.dto.response.IncidentResponse;
 import com.gehu.safety.security.UserPrincipal;
 import com.gehu.safety.service.IncidentService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,11 +17,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/incidents")
-@RequiredArgsConstructor
 public class IncidentController {
 
     private final IncidentService incidentService;
 
+
+    public IncidentController(IncidentService incidentService) {
+        this.incidentService = incidentService;
+    }
     /** Preview-only - runs AI classification/priority/summary WITHOUT saving anything. */
     @PostMapping("/analyze")
     public ApiResponse<IncidentAnalysisResponse> analyze(@Valid @RequestBody CreateIncidentAnalyzeRequest request) {

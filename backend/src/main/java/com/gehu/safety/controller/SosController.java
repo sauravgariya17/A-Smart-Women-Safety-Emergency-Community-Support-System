@@ -6,7 +6,6 @@ import com.gehu.safety.dto.response.SosResponse;
 import com.gehu.safety.security.UserPrincipal;
 import com.gehu.safety.service.SosService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,11 +15,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/sos")
-@RequiredArgsConstructor
 public class SosController {
 
     private final SosService sosService;
 
+
+    public SosController(SosService sosService) {
+        this.sosService = sosService;
+    }
     /** Step 1: creates PENDING_CONFIRMATION. No one is notified yet. */
     @PostMapping("/trigger")
     public ResponseEntity<ApiResponse<SosResponse>> trigger(

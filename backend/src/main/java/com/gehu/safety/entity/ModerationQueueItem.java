@@ -15,9 +15,6 @@ import java.time.LocalDateTime;
 @Table(name = "moderation_queue")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ModerationQueueItem {
 
     @Id
@@ -45,7 +42,6 @@ public class ModerationQueueItem {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    @Builder.Default
     private ModerationQueueStatus status = ModerationQueueStatus.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -61,5 +57,35 @@ public class ModerationQueueItem {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public ModerationQueueItem(Long id, TargetType targetType, Long targetId, String reason, ReportSource flaggedBy, ModerationQueueStatus status, User reviewedBy, LocalDateTime reviewedAt, LocalDateTime createdAt) {
+        this.id = id;
+        this.targetType = targetType;
+        this.targetId = targetId;
+        this.reason = reason;
+        this.flaggedBy = flaggedBy;
+        this.status = status;
+        this.reviewedBy = reviewedBy;
+        this.reviewedAt = reviewedAt;
+        this.createdAt = createdAt;
+    }
+
+    public ModerationQueueItem() {}
+
+    public static Builder builder() { return new Builder(); }
+    public static class Builder {
+        private final ModerationQueueItem value = new ModerationQueueItem();
+        public Builder id(Long value) { this.value.id = value; return this; }
+        public Builder targetType(TargetType value) { this.value.targetType = value; return this; }
+        public Builder targetId(Long value) { this.value.targetId = value; return this; }
+        public Builder reason(String value) { this.value.reason = value; return this; }
+        public Builder flaggedBy(ReportSource value) { this.value.flaggedBy = value; return this; }
+        public Builder reporterUser(User value) { this.value.reporterUser = value; return this; }
+        public Builder status(ModerationQueueStatus value) { this.value.status = value; return this; }
+        public Builder reviewedBy(User value) { this.value.reviewedBy = value; return this; }
+        public Builder reviewedAt(LocalDateTime value) { this.value.reviewedAt = value; return this; }
+        public Builder createdAt(LocalDateTime value) { this.value.createdAt = value; return this; }
+        public ModerationQueueItem build() { return value; }
     }
 }

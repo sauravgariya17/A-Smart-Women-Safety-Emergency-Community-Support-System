@@ -7,9 +7,6 @@ import lombok.*;
 @Table(name = "safe_zones")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class SafeZone {
 
     @Id
@@ -32,4 +29,27 @@ public class SafeZone {
 
     @Column(name = "description", length = 300)
     private String description;
+
+    public SafeZone(Long id, String name, SafeZoneType type, Double lat, Double lng, String description) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.lat = lat;
+        this.lng = lng;
+        this.description = description;
+    }
+
+    public SafeZone() {}
+
+    public static Builder builder() { return new Builder(); }
+    public static class Builder {
+        private final SafeZone value = new SafeZone();
+        public Builder id(Long value) { this.value.id = value; return this; }
+        public Builder name(String value) { this.value.name = value; return this; }
+        public Builder type(SafeZoneType value) { this.value.type = value; return this; }
+        public Builder lat(Double value) { this.value.lat = value; return this; }
+        public Builder lng(Double value) { this.value.lng = value; return this; }
+        public Builder description(String value) { this.value.description = value; return this; }
+        public SafeZone build() { return value; }
+    }
 }

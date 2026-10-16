@@ -20,7 +20,6 @@ import com.gehu.safety.service.JourneyService;
 import com.gehu.safety.service.routing.RouteResult;
 import com.gehu.safety.service.routing.RoutingProvider;
 import com.gehu.safety.util.GeoUtils;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +32,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class JourneyServiceImpl implements JourneyService {
 
     private final JourneyRepository journeyRepository;
@@ -41,6 +39,18 @@ public class JourneyServiceImpl implements JourneyService {
     private final TrustedContactRepository trustedContactRepository;
     private final MapScopeProperties mapScopeProperties;
     private final RoutingProvider routingProvider;
+
+    public JourneyServiceImpl(JourneyRepository journeyRepository,
+            UserRepository userRepository,
+            TrustedContactRepository trustedContactRepository,
+            MapScopeProperties mapScopeProperties,
+            RoutingProvider routingProvider) {
+        this.journeyRepository = journeyRepository;
+        this.userRepository = userRepository;
+        this.trustedContactRepository = trustedContactRepository;
+        this.mapScopeProperties = mapScopeProperties;
+        this.routingProvider = routingProvider;
+    }
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Override

@@ -4,8 +4,8 @@ import com.gehu.safety.config.NotificationProperties;
 import com.gehu.safety.entity.*;
 import com.gehu.safety.repository.NotificationLogRepository;
 import com.gehu.safety.service.NotificationService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -25,13 +25,21 @@ import java.util.List;
  *   Do not claim otherwise in the viva/report.
  */
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class NotificationServiceImpl implements NotificationService {
+
+    private static final Logger log = LoggerFactory.getLogger(NotificationServiceImpl.class);
 
     private final NotificationProperties notificationProperties;
     private final NotificationLogRepository notificationLogRepository;
     private final JavaMailSender mailSender; // auto-configured by spring-boot-starter-mail
+
+    public NotificationServiceImpl(NotificationProperties notificationProperties,
+            NotificationLogRepository notificationLogRepository,
+            JavaMailSender mailSender) {
+        this.notificationProperties = notificationProperties;
+        this.notificationLogRepository = notificationLogRepository;
+        this.mailSender = mailSender;
+    }
 
     @Override
     public void notifyContactsOfSos(SosAlert sosAlert, List<TrustedContact> contacts) {

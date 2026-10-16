@@ -20,9 +20,6 @@ import java.util.Set;
 @Table(name = "journeys")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Journey {
 
     @Id
@@ -54,7 +51,6 @@ public class Journey {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    @Builder.Default
     private JourneyStatus status = JourneyStatus.ACTIVE;
 
     @Column(name = "last_known_lat")
@@ -76,7 +72,6 @@ public class Journey {
             joinColumns = @JoinColumn(name = "journey_id"),
             inverseJoinColumns = @JoinColumn(name = "contact_id")
     )
-    @Builder.Default
     private Set<TrustedContact> notifiedContacts = new HashSet<>();
 
     @PrePersist
@@ -84,5 +79,44 @@ public class Journey {
         if (this.startTime == null) {
             this.startTime = LocalDateTime.now();
         }
+    }
+
+    public Journey(Long id, User user, Double startLat, Double startLng, Double destLat, Double destLng, LocalDateTime startTime, LocalDateTime expectedArrival, JourneyStatus status, Double lastKnownLat, Double lastKnownLng, LocalDateTime lastPingAt, String trackingToken, Set<TrustedContact> notifiedContacts) {
+        this.id = id;
+        this.user = user;
+        this.startLat = startLat;
+        this.startLng = startLng;
+        this.destLat = destLat;
+        this.destLng = destLng;
+        this.startTime = startTime;
+        this.expectedArrival = expectedArrival;
+        this.status = status;
+        this.lastKnownLat = lastKnownLat;
+        this.lastKnownLng = lastKnownLng;
+        this.lastPingAt = lastPingAt;
+        this.trackingToken = trackingToken;
+        this.notifiedContacts = notifiedContacts;
+    }
+
+    public Journey() {}
+
+    public static Builder builder() { return new Builder(); }
+    public static class Builder {
+        private final Journey value = new Journey();
+        public Builder id(Long value) { this.value.id = value; return this; }
+        public Builder user(User value) { this.value.user = value; return this; }
+        public Builder startLat(Double value) { this.value.startLat = value; return this; }
+        public Builder startLng(Double value) { this.value.startLng = value; return this; }
+        public Builder destLat(Double value) { this.value.destLat = value; return this; }
+        public Builder destLng(Double value) { this.value.destLng = value; return this; }
+        public Builder startTime(LocalDateTime value) { this.value.startTime = value; return this; }
+        public Builder expectedArrival(LocalDateTime value) { this.value.expectedArrival = value; return this; }
+        public Builder status(JourneyStatus value) { this.value.status = value; return this; }
+        public Builder lastKnownLat(Double value) { this.value.lastKnownLat = value; return this; }
+        public Builder lastKnownLng(Double value) { this.value.lastKnownLng = value; return this; }
+        public Builder lastPingAt(LocalDateTime value) { this.value.lastPingAt = value; return this; }
+        public Builder trackingToken(String value) { this.value.trackingToken = value; return this; }
+        public Builder notifiedContacts(Set<TrustedContact> value) { this.value.notifiedContacts = value; return this; }
+        public Journey build() { return value; }
     }
 }

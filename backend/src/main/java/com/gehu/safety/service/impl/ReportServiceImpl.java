@@ -6,12 +6,10 @@ import com.gehu.safety.exception.BadRequestException;
 import com.gehu.safety.exception.ResourceNotFoundException;
 import com.gehu.safety.repository.*;
 import com.gehu.safety.service.ReportService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService {
 
     private final ModerationQueueRepository moderationQueueRepository;
@@ -19,6 +17,16 @@ public class ReportServiceImpl implements ReportService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
+
+    public ReportServiceImpl(ModerationQueueRepository moderationQueueRepository,
+            CommunityPostRepository postRepository,
+            CommentRepository commentRepository,
+            UserRepository userRepository) {
+        this.moderationQueueRepository = moderationQueueRepository;
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
+        this.userRepository = userRepository;
+    }
     @Override
     @Transactional
     public void reportContent(Long reporterUserId, ReportContentRequest request) {

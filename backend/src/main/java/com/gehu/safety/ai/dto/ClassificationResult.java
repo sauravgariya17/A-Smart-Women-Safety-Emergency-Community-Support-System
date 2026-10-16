@@ -1,7 +1,6 @@
 package com.gehu.safety.ai.dto;
 
 import com.gehu.safety.entity.IncidentCategory;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,10 +12,16 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+
 @Builder
 public class ClassificationResult {
     private IncidentCategory category;
     private double confidence;
     private String reasoning;
+
+    public ClassificationResult(IncidentCategory category, double confidence, String reasoning) {
+        this.category = category;
+        this.confidence = confidence;
+        this.reasoning = reasoning;
+    }
 }

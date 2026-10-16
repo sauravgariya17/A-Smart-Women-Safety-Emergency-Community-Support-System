@@ -10,19 +10,21 @@ import com.gehu.safety.entity.PriorityLevel;
 import com.gehu.safety.security.UserPrincipal;
 import com.gehu.safety.service.IncidentService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin/incidents")
-@RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('MODERATOR','ADMIN')")
 public class IncidentAdminController {
 
     private final IncidentService incidentService;
 
+
+    public IncidentAdminController(IncidentService incidentService) {
+        this.incidentService = incidentService;
+    }
     @GetMapping
     public ApiResponse<PageResponse<IncidentAdminResponse>> getAll(
             @RequestParam(required = false) IncidentCategory category,

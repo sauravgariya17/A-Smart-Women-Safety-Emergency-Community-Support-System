@@ -16,9 +16,6 @@ import java.time.LocalDateTime;
 @Table(name = "notification_logs")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class NotificationLog {
 
     @Id
@@ -51,5 +48,29 @@ public class NotificationLog {
     @PrePersist
     protected void onCreate() {
         this.sentAt = LocalDateTime.now();
+    }
+
+    public NotificationLog(Long id, SosAlert sosAlert, NotificationChannel channel, String recipient, NotificationLogStatus status, LocalDateTime sentAt) {
+        this.id = id;
+        this.sosAlert = sosAlert;
+        this.channel = channel;
+        this.recipient = recipient;
+        this.status = status;
+        this.sentAt = sentAt;
+    }
+
+    public NotificationLog() {}
+
+    public static Builder builder() { return new Builder(); }
+    public static class Builder {
+        private final NotificationLog value = new NotificationLog();
+        public Builder id(Long value) { this.value.id = value; return this; }
+        public Builder sosAlert(SosAlert value) { this.value.sosAlert = value; return this; }
+        public Builder contact(TrustedContact value) { this.value.contact = value; return this; }
+        public Builder channel(NotificationChannel value) { this.value.channel = value; return this; }
+        public Builder recipient(String value) { this.value.recipient = value; return this; }
+        public Builder status(NotificationLogStatus value) { this.value.status = value; return this; }
+        public Builder sentAt(LocalDateTime value) { this.value.sentAt = value; return this; }
+        public NotificationLog build() { return value; }
     }
 }

@@ -6,7 +6,6 @@ import com.gehu.safety.dto.response.SosManagementResponse;
 import com.gehu.safety.security.UserPrincipal;
 import com.gehu.safety.service.SosService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +20,15 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/sos/manage")
-@RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('SECURITY_STAFF','ADMIN')")
 public class SosManagementController {
 
     private final SosService sosService;
 
+
+    public SosManagementController(SosService sosService) {
+        this.sosService = sosService;
+    }
     @GetMapping("/active")
     public ApiResponse<List<SosManagementResponse>> getActiveQueue() {
         return ApiResponse.success(sosService.getActiveQueue());

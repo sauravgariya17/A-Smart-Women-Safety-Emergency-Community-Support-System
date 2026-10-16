@@ -13,7 +13,6 @@ import com.gehu.safety.repository.ModerationQueueRepository;
 import com.gehu.safety.repository.SosAlertRepository;
 import com.gehu.safety.service.DashboardService;
 import com.gehu.safety.service.SafetyAnalyticsService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +29,6 @@ import java.util.List;
  * cross-module counts (SOS, community, moderation) here.
  */
 @Service
-@RequiredArgsConstructor
 public class DashboardServiceImpl implements DashboardService {
 
     private static final List<IncidentStatus> OPEN_STATUSES = List.of(
@@ -46,6 +44,18 @@ public class DashboardServiceImpl implements DashboardService {
     private final ModerationQueueRepository moderationQueueRepository;
     private final SafetyAnalyticsService safetyAnalyticsService;
 
+
+    public DashboardServiceImpl(IncidentReportRepository incidentReportRepository,
+            SosAlertRepository sosAlertRepository,
+            CommunityPostRepository communityPostRepository,
+            ModerationQueueRepository moderationQueueRepository,
+            SafetyAnalyticsService safetyAnalyticsService) {
+        this.incidentReportRepository = incidentReportRepository;
+        this.sosAlertRepository = sosAlertRepository;
+        this.communityPostRepository = communityPostRepository;
+        this.moderationQueueRepository = moderationQueueRepository;
+        this.safetyAnalyticsService = safetyAnalyticsService;
+    }
     @Override
     public DashboardSummaryResponse getSummary(int windowDays) {
         // Delegate the incident category/area/trend aggregation + privacy

@@ -3,7 +3,6 @@ package com.gehu.safety.controller;
 import com.gehu.safety.dto.response.ApiResponse;
 import com.gehu.safety.dto.response.SafetyAnalyticsResponse;
 import com.gehu.safety.service.SafetyAnalyticsService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,12 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/analytics")
-@RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('MODERATOR','ADMIN')")
 public class AnalyticsController {
 
     private final SafetyAnalyticsService safetyAnalyticsService;
 
+
+    public AnalyticsController(SafetyAnalyticsService safetyAnalyticsService) {
+        this.safetyAnalyticsService = safetyAnalyticsService;
+    }
     @GetMapping("/safety")
     public ApiResponse<SafetyAnalyticsResponse> getSafetyAnalytics(
             @RequestParam(defaultValue = "30") int windowDays) {

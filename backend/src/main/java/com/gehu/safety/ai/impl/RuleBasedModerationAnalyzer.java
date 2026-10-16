@@ -4,7 +4,6 @@ import com.gehu.safety.ai.ContentModerationAnalyzer;
 import com.gehu.safety.ai.dto.ModerationResult;
 import com.gehu.safety.repository.CommentRepository;
 import com.gehu.safety.repository.CommunityPostRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,6 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
 public class RuleBasedModerationAnalyzer implements ContentModerationAnalyzer {
 
     private static final List<String> SEVERE_KEYWORDS = List.of(
@@ -37,6 +35,12 @@ public class RuleBasedModerationAnalyzer implements ContentModerationAnalyzer {
     private final CommunityPostRepository postRepository;
     private final CommentRepository commentRepository;
 
+
+    public RuleBasedModerationAnalyzer(CommunityPostRepository postRepository,
+            CommentRepository commentRepository) {
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
+    }
     @Override
     public ModerationResult analyze(String text, Long authorUserId) {
         String lower = text == null ? "" : text.toLowerCase(Locale.ROOT);

@@ -9,7 +9,6 @@ import com.gehu.safety.exception.ResourceNotFoundException;
 import com.gehu.safety.repository.UserRepository;
 import com.gehu.safety.service.AuditService;
 import com.gehu.safety.service.UserAdminService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,12 +16,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class UserAdminServiceImpl implements UserAdminService {
 
     private final UserRepository userRepository;
     private final AuditService auditService;
 
+
+    public UserAdminServiceImpl(UserRepository userRepository,
+            AuditService auditService) {
+        this.userRepository = userRepository;
+        this.auditService = auditService;
+    }
     @Override
     public PageResponse<AdminUserResponse> listUsers(Role role, String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));

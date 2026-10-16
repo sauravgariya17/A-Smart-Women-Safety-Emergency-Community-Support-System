@@ -29,9 +29,6 @@ import java.time.LocalDateTime;
 @Table(name = "community_posts")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class CommunityPost {
 
     @Id
@@ -70,19 +67,15 @@ public class CommunityPost {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "moderation_status", nullable = false, length = 20)
-    @Builder.Default
     private ModerationStatus moderationStatus = ModerationStatus.PUBLISHED;
 
     @Column(name = "upvote_count", nullable = false)
-    @Builder.Default
     private Integer upvoteCount = 0;
 
     @Column(name = "downvote_count", nullable = false)
-    @Builder.Default
     private Integer downvoteCount = 0;
 
     @Column(name = "comment_count", nullable = false)
-    @Builder.Default
     private Integer commentCount = 0;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -91,5 +84,41 @@ public class CommunityPost {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public CommunityPost(Long id, String anonymousHandleSnapshot, String title, String body, PostCategory category, String areaLabel, Double aiToxicityScore, ModerationStatus moderationStatus, Integer upvoteCount, Integer downvoteCount, Integer commentCount, LocalDateTime createdAt) {
+        this.id = id;
+        this.anonymousHandleSnapshot = anonymousHandleSnapshot;
+        this.title = title;
+        this.body = body;
+        this.category = category;
+        this.areaLabel = areaLabel;
+        this.aiToxicityScore = aiToxicityScore;
+        this.moderationStatus = moderationStatus;
+        this.upvoteCount = upvoteCount;
+        this.downvoteCount = downvoteCount;
+        this.commentCount = commentCount;
+        this.createdAt = createdAt;
+    }
+
+    public CommunityPost() {}
+
+    public static Builder builder() { return new Builder(); }
+    public static class Builder {
+        private final CommunityPost value = new CommunityPost();
+        public Builder id(Long value) { this.value.id = value; return this; }
+        public Builder author(User value) { this.value.author = value; return this; }
+        public Builder anonymousHandleSnapshot(String value) { this.value.anonymousHandleSnapshot = value; return this; }
+        public Builder title(String value) { this.value.title = value; return this; }
+        public Builder body(String value) { this.value.body = value; return this; }
+        public Builder category(PostCategory value) { this.value.category = value; return this; }
+        public Builder areaLabel(String value) { this.value.areaLabel = value; return this; }
+        public Builder aiToxicityScore(Double value) { this.value.aiToxicityScore = value; return this; }
+        public Builder moderationStatus(ModerationStatus value) { this.value.moderationStatus = value; return this; }
+        public Builder upvoteCount(Integer value) { this.value.upvoteCount = value; return this; }
+        public Builder downvoteCount(Integer value) { this.value.downvoteCount = value; return this; }
+        public Builder commentCount(Integer value) { this.value.commentCount = value; return this; }
+        public Builder createdAt(LocalDateTime value) { this.value.createdAt = value; return this; }
+        public CommunityPost build() { return value; }
     }
 }

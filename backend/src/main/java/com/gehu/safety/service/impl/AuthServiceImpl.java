@@ -15,7 +15,6 @@ import com.gehu.safety.security.JwtTokenProvider;
 import com.gehu.safety.security.JwtProperties;
 import com.gehu.safety.service.AnonymousHandleGenerator;
 import com.gehu.safety.service.AuthService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
-@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
@@ -36,6 +34,22 @@ public class AuthServiceImpl implements AuthService {
     private final JwtProperties jwtProperties;
     private final AnonymousHandleGenerator handleGenerator;
 
+
+    public AuthServiceImpl(UserRepository userRepository,
+            RefreshTokenRepository refreshTokenRepository,
+            PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager,
+            JwtTokenProvider jwtTokenProvider,
+            JwtProperties jwtProperties,
+            AnonymousHandleGenerator handleGenerator) {
+        this.userRepository = userRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.jwtProperties = jwtProperties;
+        this.handleGenerator = handleGenerator;
+    }
     @Override
     @Transactional
     public AuthResponse register(RegisterRequest request) {

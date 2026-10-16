@@ -13,9 +13,6 @@ import java.time.LocalDateTime;
 @Table(name = "comments")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Comment {
 
     @Id
@@ -39,15 +36,12 @@ public class Comment {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "moderation_status", nullable = false, length = 20)
-    @Builder.Default
     private ModerationStatus moderationStatus = ModerationStatus.PUBLISHED;
 
     @Column(name = "upvote_count", nullable = false)
-    @Builder.Default
     private Integer upvoteCount = 0;
 
     @Column(name = "downvote_count", nullable = false)
-    @Builder.Default
     private Integer downvoteCount = 0;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -56,5 +50,33 @@ public class Comment {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public Comment(Long id, CommunityPost post, String anonymousHandleSnapshot, String body, ModerationStatus moderationStatus, Integer upvoteCount, Integer downvoteCount, LocalDateTime createdAt) {
+        this.id = id;
+        this.post = post;
+        this.anonymousHandleSnapshot = anonymousHandleSnapshot;
+        this.body = body;
+        this.moderationStatus = moderationStatus;
+        this.upvoteCount = upvoteCount;
+        this.downvoteCount = downvoteCount;
+        this.createdAt = createdAt;
+    }
+
+    public Comment() {}
+
+    public static Builder builder() { return new Builder(); }
+    public static class Builder {
+        private final Comment value = new Comment();
+        public Builder id(Long value) { this.value.id = value; return this; }
+        public Builder post(CommunityPost value) { this.value.post = value; return this; }
+        public Builder author(User value) { this.value.author = value; return this; }
+        public Builder anonymousHandleSnapshot(String value) { this.value.anonymousHandleSnapshot = value; return this; }
+        public Builder body(String value) { this.value.body = value; return this; }
+        public Builder moderationStatus(ModerationStatus value) { this.value.moderationStatus = value; return this; }
+        public Builder upvoteCount(Integer value) { this.value.upvoteCount = value; return this; }
+        public Builder downvoteCount(Integer value) { this.value.downvoteCount = value; return this; }
+        public Builder createdAt(LocalDateTime value) { this.value.createdAt = value; return this; }
+        public Comment build() { return value; }
     }
 }

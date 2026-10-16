@@ -4,8 +4,8 @@ import com.gehu.safety.config.MapScopeProperties;
 import com.gehu.safety.entity.Journey;
 import com.gehu.safety.entity.JourneyStatus;
 import com.gehu.safety.repository.JourneyRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,13 +24,19 @@ import java.util.List;
  * keeps the integration seam explicit rather than silently absent.
  */
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class JourneyEscalationService {
+
+    private static final Logger log = LoggerFactory.getLogger(JourneyEscalationService.class);
 
     private final JourneyRepository journeyRepository;
     private final MapScopeProperties mapScopeProperties;
 
+
+    public JourneyEscalationService(JourneyRepository journeyRepository,
+            MapScopeProperties mapScopeProperties) {
+        this.journeyRepository = journeyRepository;
+        this.mapScopeProperties = mapScopeProperties;
+    }
     @Scheduled(fixedDelay = 60_000) // every 60 seconds
     @Transactional
     public void escalateOverdueJourneys() {

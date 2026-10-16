@@ -13,7 +13,6 @@ import com.gehu.safety.repository.ModerationQueueRepository;
 import com.gehu.safety.repository.UserRepository;
 import com.gehu.safety.service.CommentService;
 import com.gehu.safety.service.VoteService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
@@ -32,6 +30,20 @@ public class CommentServiceImpl implements CommentService {
     private final AiTextAnalysisService aiTextAnalysisService;
     private final VoteService voteService;
 
+
+    public CommentServiceImpl(CommentRepository commentRepository,
+            CommunityPostRepository postRepository,
+            UserRepository userRepository,
+            ModerationQueueRepository moderationQueueRepository,
+            AiTextAnalysisService aiTextAnalysisService,
+            VoteService voteService) {
+        this.commentRepository = commentRepository;
+        this.postRepository = postRepository;
+        this.userRepository = userRepository;
+        this.moderationQueueRepository = moderationQueueRepository;
+        this.aiTextAnalysisService = aiTextAnalysisService;
+        this.voteService = voteService;
+    }
     @Override
     @Transactional
     public CommentResponse addComment(Long authorUserId, Long postId, CreateCommentRequest request) {

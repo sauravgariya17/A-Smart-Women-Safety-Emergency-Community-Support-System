@@ -12,7 +12,6 @@ import com.gehu.safety.repository.IncidentReportRepository;
 import com.gehu.safety.repository.UserRepository;
 import com.gehu.safety.service.AuditService;
 import com.gehu.safety.service.IncidentService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class IncidentServiceImpl implements IncidentService {
 
     private final IncidentReportRepository incidentReportRepository;
@@ -33,6 +31,16 @@ public class IncidentServiceImpl implements IncidentService {
     private final AiTextAnalysisService aiTextAnalysisService;
     private final AuditService auditService;
 
+
+    public IncidentServiceImpl(IncidentReportRepository incidentReportRepository,
+            UserRepository userRepository,
+            AiTextAnalysisService aiTextAnalysisService,
+            AuditService auditService) {
+        this.incidentReportRepository = incidentReportRepository;
+        this.userRepository = userRepository;
+        this.aiTextAnalysisService = aiTextAnalysisService;
+        this.auditService = auditService;
+    }
     @Override
     public IncidentAnalysisResponse analyze(CreateIncidentAnalyzeRequest request) {
         IncidentAnalysis analysis = aiTextAnalysisService.analyzeIncident(request.getDescription());

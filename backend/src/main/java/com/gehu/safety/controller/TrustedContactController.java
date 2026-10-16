@@ -6,7 +6,6 @@ import com.gehu.safety.dto.response.TrustedContactResponse;
 import com.gehu.safety.security.UserPrincipal;
 import com.gehu.safety.service.TrustedContactService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,11 +20,14 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/contacts")
-@RequiredArgsConstructor
 public class TrustedContactController {
 
     private final TrustedContactService trustedContactService;
 
+
+    public TrustedContactController(TrustedContactService trustedContactService) {
+        this.trustedContactService = trustedContactService;
+    }
     @PostMapping
     public ResponseEntity<ApiResponse<TrustedContactResponse>> addContact(
             @AuthenticationPrincipal UserPrincipal principal,

@@ -9,9 +9,6 @@ import java.time.LocalDateTime;
 @Table(name = "sos_alerts")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class SosAlert {
 
     @Id
@@ -25,7 +22,6 @@ public class SosAlert {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false, length = 30)
-    @Builder.Default
     private SosCategory category = SosCategory.PERSONAL_SAFETY;
 
     @Column(name = "lat", nullable = false)
@@ -36,7 +32,6 @@ public class SosAlert {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 25)
-    @Builder.Default
     private SosStatus status = SosStatus.PENDING_CONFIRMATION;
 
     @Column(name = "confirmation_expires_at")
@@ -64,5 +59,42 @@ public class SosAlert {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public SosAlert(Long id, User user, SosCategory category, Double lat, Double lng, SosStatus status, LocalDateTime confirmationExpiresAt, LocalDateTime triggeredAt, LocalDateTime createdAt, User acknowledgedBy, LocalDateTime acknowledgedAt, LocalDateTime resolvedAt, String notes) {
+        this.id = id;
+        this.user = user;
+        this.category = category;
+        this.lat = lat;
+        this.lng = lng;
+        this.status = status;
+        this.confirmationExpiresAt = confirmationExpiresAt;
+        this.triggeredAt = triggeredAt;
+        this.createdAt = createdAt;
+        this.acknowledgedBy = acknowledgedBy;
+        this.acknowledgedAt = acknowledgedAt;
+        this.resolvedAt = resolvedAt;
+        this.notes = notes;
+    }
+
+    public SosAlert() {}
+
+    public static Builder builder() { return new Builder(); }
+    public static class Builder {
+        private final SosAlert value = new SosAlert();
+        public Builder id(Long value) { this.value.id = value; return this; }
+        public Builder user(User value) { this.value.user = value; return this; }
+        public Builder category(SosCategory value) { this.value.category = value; return this; }
+        public Builder lat(Double value) { this.value.lat = value; return this; }
+        public Builder lng(Double value) { this.value.lng = value; return this; }
+        public Builder status(SosStatus value) { this.value.status = value; return this; }
+        public Builder confirmationExpiresAt(LocalDateTime value) { this.value.confirmationExpiresAt = value; return this; }
+        public Builder triggeredAt(LocalDateTime value) { this.value.triggeredAt = value; return this; }
+        public Builder createdAt(LocalDateTime value) { this.value.createdAt = value; return this; }
+        public Builder acknowledgedBy(User value) { this.value.acknowledgedBy = value; return this; }
+        public Builder acknowledgedAt(LocalDateTime value) { this.value.acknowledgedAt = value; return this; }
+        public Builder resolvedAt(LocalDateTime value) { this.value.resolvedAt = value; return this; }
+        public Builder notes(String value) { this.value.notes = value; return this; }
+        public SosAlert build() { return value; }
     }
 }

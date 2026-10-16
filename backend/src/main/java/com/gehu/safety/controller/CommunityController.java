@@ -10,7 +10,6 @@ import com.gehu.safety.service.CommunityPostService;
 import com.gehu.safety.service.ReportService;
 import com.gehu.safety.service.VoteService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/community")
-@RequiredArgsConstructor
 public class CommunityController {
 
     private final CommunityPostService postService;
@@ -31,6 +29,16 @@ public class CommunityController {
     private final VoteService voteService;
     private final ReportService reportService;
 
+
+    public CommunityController(CommunityPostService postService,
+            CommentService commentService,
+            VoteService voteService,
+            ReportService reportService) {
+        this.postService = postService;
+        this.commentService = commentService;
+        this.voteService = voteService;
+        this.reportService = reportService;
+    }
     // ---------- Posts ----------
 
     @PostMapping("/posts")

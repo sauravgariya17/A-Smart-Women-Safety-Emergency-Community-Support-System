@@ -17,9 +17,6 @@ import java.time.LocalDateTime;
 @Table(name = "incident_reports")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class IncidentReport {
 
     @Id
@@ -73,12 +70,10 @@ public class IncidentReport {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "visibility_type", nullable = false, length = 20)
-    @Builder.Default
     private IncidentVisibility visibilityType = IncidentVisibility.ANON_PUBLIC;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    @Builder.Default
     private IncidentStatus status = IncidentStatus.SUBMITTED;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -98,5 +93,55 @@ public class IncidentReport {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public IncidentReport(Long id, User user, String description, IncidentCategory category, PriorityLevel priority, IncidentCategory aiSuggestedCategory, PriorityLevel aiSuggestedPriority, Double aiConfidence, String aiReasoning, String aiSummary, Double lat, Double lng, String areaLabel, String evidenceUrl, IncidentVisibility visibilityType, IncidentStatus status, LocalDateTime createdAt, User reviewedBy, LocalDateTime reviewedAt) {
+        this.id = id;
+        this.user = user;
+        this.description = description;
+        this.category = category;
+        this.priority = priority;
+        this.aiSuggestedCategory = aiSuggestedCategory;
+        this.aiSuggestedPriority = aiSuggestedPriority;
+        this.aiConfidence = aiConfidence;
+        this.aiReasoning = aiReasoning;
+        this.aiSummary = aiSummary;
+        this.lat = lat;
+        this.lng = lng;
+        this.areaLabel = areaLabel;
+        this.evidenceUrl = evidenceUrl;
+        this.visibilityType = visibilityType;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.reviewedBy = reviewedBy;
+        this.reviewedAt = reviewedAt;
+    }
+
+    public IncidentReport() {}
+
+    public static Builder builder() { return new Builder(); }
+    public static class Builder {
+        private final IncidentReport value = new IncidentReport();
+        public Builder id(Long value) { this.value.id = value; return this; }
+        public Builder user(User value) { this.value.user = value; return this; }
+        public Builder description(String value) { this.value.description = value; return this; }
+        public Builder category(IncidentCategory value) { this.value.category = value; return this; }
+        public Builder priority(PriorityLevel value) { this.value.priority = value; return this; }
+        public Builder aiSuggestedCategory(IncidentCategory value) { this.value.aiSuggestedCategory = value; return this; }
+        public Builder aiSuggestedPriority(PriorityLevel value) { this.value.aiSuggestedPriority = value; return this; }
+        public Builder aiConfidence(Double value) { this.value.aiConfidence = value; return this; }
+        public Builder aiReasoning(String value) { this.value.aiReasoning = value; return this; }
+        public Builder aiSummary(String value) { this.value.aiSummary = value; return this; }
+        public Builder lat(Double value) { this.value.lat = value; return this; }
+        public Builder lng(Double value) { this.value.lng = value; return this; }
+        public Builder areaLabel(String value) { this.value.areaLabel = value; return this; }
+        public Builder evidenceUrl(String value) { this.value.evidenceUrl = value; return this; }
+        public Builder visibilityType(IncidentVisibility value) { this.value.visibilityType = value; return this; }
+        public Builder status(IncidentStatus value) { this.value.status = value; return this; }
+        public Builder createdAt(LocalDateTime value) { this.value.createdAt = value; return this; }
+        public Builder assignedTo(User value) { this.value.assignedTo = value; return this; }
+        public Builder reviewedBy(User value) { this.value.reviewedBy = value; return this; }
+        public Builder reviewedAt(LocalDateTime value) { this.value.reviewedAt = value; return this; }
+        public IncidentReport build() { return value; }
     }
 }

@@ -8,7 +8,6 @@ import com.gehu.safety.dto.response.JourneyShareResponse;
 import com.gehu.safety.security.UserPrincipal;
 import com.gehu.safety.service.JourneyService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,11 +17,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/journeys")
-@RequiredArgsConstructor
 public class JourneyController {
 
     private final JourneyService journeyService;
 
+
+    public JourneyController(JourneyService journeyService) {
+        this.journeyService = journeyService;
+    }
     @PostMapping
     public ResponseEntity<ApiResponse<JourneyResponse>> startJourney(
             @AuthenticationPrincipal UserPrincipal principal,

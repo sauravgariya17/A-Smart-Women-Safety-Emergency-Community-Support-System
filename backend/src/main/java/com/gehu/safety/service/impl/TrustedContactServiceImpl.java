@@ -9,7 +9,6 @@ import com.gehu.safety.exception.ResourceNotFoundException;
 import com.gehu.safety.repository.TrustedContactRepository;
 import com.gehu.safety.repository.UserRepository;
 import com.gehu.safety.service.TrustedContactService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class TrustedContactServiceImpl implements TrustedContactService {
 
     private static final int MAX_CONTACTS = 5;
@@ -25,6 +23,12 @@ public class TrustedContactServiceImpl implements TrustedContactService {
     private final TrustedContactRepository trustedContactRepository;
     private final UserRepository userRepository;
 
+
+    public TrustedContactServiceImpl(TrustedContactRepository trustedContactRepository,
+            UserRepository userRepository) {
+        this.trustedContactRepository = trustedContactRepository;
+        this.userRepository = userRepository;
+    }
     @Override
     @Transactional
     public TrustedContactResponse addContact(Long userId, TrustedContactRequest request) {

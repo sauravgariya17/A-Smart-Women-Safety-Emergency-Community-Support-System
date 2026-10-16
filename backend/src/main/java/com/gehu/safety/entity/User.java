@@ -17,9 +17,6 @@ import java.time.LocalDateTime;
 @Table(name = "users")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class User {
 
     @Id
@@ -41,18 +38,15 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)
-    @Builder.Default
     private Role role = Role.USER;
 
     @Column(name = "anonymous_handle", nullable = false, unique = true, length = 50)
     private String anonymousHandle;
 
     @Column(name = "is_verified", nullable = false)
-    @Builder.Default
     private boolean verified = false;
 
     @Column(name = "is_active", nullable = false)
-    @Builder.Default
     private boolean active = true;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -70,5 +64,38 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public User(Long id, String name, String email, String passwordHash, String phoneEncrypted, Role role, String anonymousHandle, boolean verified, boolean active, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.phoneEncrypted = phoneEncrypted;
+        this.role = role;
+        this.anonymousHandle = anonymousHandle;
+        this.verified = verified;
+        this.active = active;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public User() {}
+
+    public static Builder builder() { return new Builder(); }
+    public static class Builder {
+        private final User value = new User();
+        public Builder id(Long value) { this.value.id = value; return this; }
+        public Builder name(String value) { this.value.name = value; return this; }
+        public Builder email(String value) { this.value.email = value; return this; }
+        public Builder passwordHash(String value) { this.value.passwordHash = value; return this; }
+        public Builder phoneEncrypted(String value) { this.value.phoneEncrypted = value; return this; }
+        public Builder role(Role value) { this.value.role = value; return this; }
+        public Builder anonymousHandle(String value) { this.value.anonymousHandle = value; return this; }
+        public Builder verified(boolean value) { this.value.verified = value; return this; }
+        public Builder active(boolean value) { this.value.active = value; return this; }
+        public Builder createdAt(LocalDateTime value) { this.value.createdAt = value; return this; }
+        public Builder updatedAt(LocalDateTime value) { this.value.updatedAt = value; return this; }
+        public User build() { return value; }
     }
 }
