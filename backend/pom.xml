@@ -30,6 +30,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- JwtAuthEntryPoint currently uses Jackson 2's ObjectMapper. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-jackson2</artifactId>
+        </dependency>
+
         <!-- JPA + MySQL -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
