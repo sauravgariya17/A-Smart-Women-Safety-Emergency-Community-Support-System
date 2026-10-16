@@ -10,4 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ModerationQueueRepository extends JpaRepository<ModerationQueueItem, Long> {
     Page<ModerationQueueItem> findByStatus(ModerationQueueStatus status, Pageable pageable);
     boolean existsByTargetTypeAndTargetIdAndReporterUserId(TargetType targetType, Long targetId, Long reporterUserId);
+
+    long countByStatus(ModerationQueueStatus status);
+    long countByFlaggedBy(com.gehu.safety.entity.ReportSource flaggedBy);
 }

@@ -91,10 +91,13 @@ CREATE TABLE journey_trusted_contacts (
 CREATE TABLE sos_alerts (
     sos_id              BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id             BIGINT NOT NULL,
+    category            ENUM('PERSONAL_SAFETY','MEDICAL_EMERGENCY','ACCIDENT','OTHER') NOT NULL DEFAULT 'PERSONAL_SAFETY',
     lat                 DECIMAL(10,7) NOT NULL,
     lng                 DECIMAL(10,7) NOT NULL,
-    status              ENUM('TRIGGERED','ACKNOWLEDGED','RESOLVED','FALSE_ALARM') NOT NULL DEFAULT 'TRIGGERED',
-    triggered_at        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status              ENUM('PENDING_CONFIRMATION','TRIGGERED','ACKNOWLEDGED','RESOLVED','FALSE_ALARM','CANCELLED') NOT NULL DEFAULT 'PENDING_CONFIRMATION',
+    confirmation_expires_at TIMESTAMP NULL,   -- PENDING_CONFIRMATION auto-cancels after this, if not confirmed
+    triggered_at        TIMESTAMP NULL,        -- set only once status becomes TRIGGERED (i.e. confirmed)
+    created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     acknowledged_by     BIGINT NULL,
     acknowledged_at     TIMESTAMP NULL,
     resolved_at         TIMESTAMP NULL,
@@ -103,23 +106,61 @@ CREATE TABLE sos_alerts (
     CONSTRAINT fk_sos_ack_by FOREIGN KEY (acknowledged_by) REFERENCES users(user_id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
+-- Records every notification attempt made to a trusted contact for an SOS
+-- event - this IS the "notification architecture" in concrete, auditable
+-- form. channel=EMAIL is a real send attempt (SMTP); CONSOLE_SIMULATION is
+-- the honest fallback used whenever real email isn't configured/reachable -
+-- there is deliberately no SMS/police channel claimed here.
+CREATE TABLE notification_logs (
+    log_id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    sos_id          BIGINT NOT NULL,
+    contact_id      BIGINT NULL,              -- NULL if the recipient was campus security, not a trusted contact
+    channel         ENUM('EMAIL','CONSOLE_SIMULATION') NOT NULL,
+    recipient       VARCHAR(150) NOT NULL,
+    status          ENUM('SENT','FAILED','SIMULATED') NOT NULL,
+    sent_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_notiflog_sos FOREIGN KEY (sos_id) REFERENCES sos_alerts(sos_id) ON DELETE CASCADE,
+    CONSTRAINT fk_notiflog_contact FOREIGN KEY (contact_id) REFERENCES trusted_contacts(contact_id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
 -- ------------------------------------------------------------
--- 6. INCIDENT REPORTS (formal, trackable reports)
+-- 6. INCIDENT REPORTS (formal, trackable reports, AI-assisted triage)
 -- ------------------------------------------------------------
+-- DESIGN NOTE (refined from the original SRS draft): user_id is ALWAYS
+-- populated internally, even for FULL_ANON reports - mirrors the
+-- Community module's anonymity-boundary pattern (author known internally,
+-- hidden externally via DTO mapping) so a reporter can always see their
+-- own submission history. visibility_type controls what ADMINS see.
 CREATE TABLE incident_reports (
-    report_id           BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id             BIGINT NULL,                 -- NULL allowed for fully-anonymous-to-admin reports
-    category            VARCHAR(60) NOT NULL,
-    description         VARCHAR(2000) NOT NULL,
-    lat                 DECIMAL(10,7) NULL,
-    lng                 DECIMAL(10,7) NULL,
-    evidence_url        VARCHAR(500) NULL,
-    visibility_type     ENUM('ANON_PUBLIC','NAMED_ADMIN_ONLY','FULL_ANON') NOT NULL DEFAULT 'ANON_PUBLIC',
-    status              ENUM('SUBMITTED','UNDER_REVIEW','ACTION_TAKEN','CLOSED') NOT NULL DEFAULT 'SUBMITTED',
-    ai_category         VARCHAR(60) NULL,
-    ai_score            DECIMAL(4,3) NULL,
-    created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_report_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+    report_id               BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id                 BIGINT NOT NULL,
+    description             VARCHAR(3000) NOT NULL,
+
+    category                VARCHAR(30) NOT NULL,   -- final/effective, defaults to AI suggestion, reporter may accept/edit
+    priority                VARCHAR(20) NOT NULL,   -- final/effective, defaults to AI suggestion, ADMIN/MODERATOR may override
+
+    ai_suggested_category   VARCHAR(30) NULL,       -- AI's ORIGINAL suggestion, kept immutable for audit
+    ai_suggested_priority   VARCHAR(20) NULL,
+    ai_confidence           DECIMAL(4,3) NULL,
+    ai_reasoning            VARCHAR(500) NULL,
+    ai_summary              VARCHAR(800) NULL,      -- admin-only condensed view of a long description
+
+    lat                     DECIMAL(10,7) NULL,
+    lng                     DECIMAL(10,7) NULL,
+    area_label              VARCHAR(120) NULL,
+
+    evidence_url            VARCHAR(500) NULL,
+    visibility_type         ENUM('ANON_PUBLIC','NAMED_ADMIN_ONLY','FULL_ANON') NOT NULL DEFAULT 'ANON_PUBLIC',
+    status                  ENUM('SUBMITTED','UNDER_REVIEW','ASSIGNED','IN_PROGRESS','RESOLVED','CLOSED') NOT NULL DEFAULT 'SUBMITTED',
+
+    created_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    assigned_to             BIGINT NULL,     -- staff member handling this report (ASSIGNED stage)
+    reviewed_by             BIGINT NULL,
+    reviewed_at             TIMESTAMP NULL,
+
+    CONSTRAINT fk_report_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_report_assigned FOREIGN KEY (assigned_to) REFERENCES users(user_id) ON DELETE SET NULL,
+    CONSTRAINT fk_report_reviewer FOREIGN KEY (reviewed_by) REFERENCES users(user_id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- ------------------------------------------------------------

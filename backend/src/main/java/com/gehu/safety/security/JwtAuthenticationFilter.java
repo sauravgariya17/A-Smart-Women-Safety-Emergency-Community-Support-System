@@ -37,6 +37,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
+                    // IMPORTANT: manually building the auth token like this bypasses
+                    // Spring Security's usual DaoAuthenticationProvider checks
+                    // (isEnabled/isAccountNonLocked), which only run during the
+                    // login flow. Without this explicit check, an admin suspending
+                    // a user (UserAdminService.updateStatus) would NOT take effect
+                    // until that user's existing access token naturally expired.
+                    if (!userDetails.isEnabled() || !userDetails.isAccountNonLocked()) {
+                        filterChain.doFilter(request, response);
+                        return;
+                    }
+
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

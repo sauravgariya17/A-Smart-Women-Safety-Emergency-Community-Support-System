@@ -1,5 +1,7 @@
 package com.gehu.safety.service.impl;
 
+import com.gehu.safety.ai.AiTextAnalysisService;
+import com.gehu.safety.ai.dto.ModerationResult;
 import com.gehu.safety.dto.request.CreatePostRequest;
 import com.gehu.safety.dto.response.PageResponse;
 import com.gehu.safety.dto.response.PostDetailResponse;
@@ -10,7 +12,6 @@ import com.gehu.safety.repository.CommunityPostRepository;
 import com.gehu.safety.repository.ModerationQueueRepository;
 import com.gehu.safety.repository.UserRepository;
 import com.gehu.safety.service.CommunityPostService;
-import com.gehu.safety.service.ContentModerationChecker;
 import com.gehu.safety.service.VoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,7 @@ public class CommunityPostServiceImpl implements CommunityPostService {
     private final CommunityPostRepository postRepository;
     private final UserRepository userRepository;
     private final ModerationQueueRepository moderationQueueRepository;
-    private final ContentModerationChecker moderationChecker;
+    private final AiTextAnalysisService aiTextAnalysisService;
     private final VoteService voteService;
 
     @Override
@@ -38,8 +39,9 @@ public class CommunityPostServiceImpl implements CommunityPostService {
         User author = userRepository.findById(authorUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        String flagReason = moderationChecker.checkContent(request.getTitle() + " " + request.getBody());
-        ModerationStatus status = (flagReason != null) ? ModerationStatus.PENDING_REVIEW : ModerationStatus.PUBLISHED;
+        ModerationResult moderation = aiTextAnalysisService.analyzeForModeration(
+                request.getTitle() + " " + request.getBody(), authorUserId);
+        ModerationStatus status = moderation.shouldQueue() ? ModerationStatus.PENDING_REVIEW : ModerationStatus.PUBLISHED;
 
         CommunityPost post = CommunityPost.builder()
                 .author(author)                                   // internal FK only, never mapped to a DTO
@@ -53,11 +55,11 @@ public class CommunityPostServiceImpl implements CommunityPostService {
 
         post = postRepository.save(post);
 
-        if (flagReason != null) {
+        if (moderation.shouldQueue()) {
             ModerationQueueItem queueItem = ModerationQueueItem.builder()
                     .targetType(TargetType.POST)
                     .targetId(post.getId())
-                    .reason(flagReason)
+                    .reason(moderation.getReasoning())
                     .flaggedBy(ReportSource.AI)
                     .status(ModerationQueueStatus.PENDING)
                     .build();

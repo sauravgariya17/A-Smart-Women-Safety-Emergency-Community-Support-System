@@ -26,4 +26,6 @@ public interface CommunityPostRepository extends JpaRepository<CommunityPost, Lo
 
     // Note: findAll(Pageable) is already inherited from JpaRepository and is
     // used by the moderation service to fetch posts regardless of status.
+
+    long countByModerationStatus(ModerationStatus status);
 }

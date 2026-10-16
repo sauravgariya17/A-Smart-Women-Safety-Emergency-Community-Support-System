@@ -1,5 +1,7 @@
 package com.gehu.safety.service.impl;
 
+import com.gehu.safety.ai.AiTextAnalysisService;
+import com.gehu.safety.ai.dto.ModerationResult;
 import com.gehu.safety.dto.request.CreateCommentRequest;
 import com.gehu.safety.dto.response.CommentResponse;
 import com.gehu.safety.dto.response.PageResponse;
@@ -10,7 +12,6 @@ import com.gehu.safety.repository.CommunityPostRepository;
 import com.gehu.safety.repository.ModerationQueueRepository;
 import com.gehu.safety.repository.UserRepository;
 import com.gehu.safety.service.CommentService;
-import com.gehu.safety.service.ContentModerationChecker;
 import com.gehu.safety.service.VoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommunityPostRepository postRepository;
     private final UserRepository userRepository;
     private final ModerationQueueRepository moderationQueueRepository;
-    private final ContentModerationChecker moderationChecker;
+    private final AiTextAnalysisService aiTextAnalysisService;
     private final VoteService voteService;
 
     @Override
@@ -44,8 +45,8 @@ public class CommentServiceImpl implements CommentService {
         User author = userRepository.findById(authorUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        String flagReason = moderationChecker.checkContent(request.getBody());
-        ModerationStatus status = (flagReason != null) ? ModerationStatus.PENDING_REVIEW : ModerationStatus.PUBLISHED;
+        ModerationResult moderation = aiTextAnalysisService.analyzeForModeration(request.getBody(), authorUserId);
+        ModerationStatus status = moderation.shouldQueue() ? ModerationStatus.PENDING_REVIEW : ModerationStatus.PUBLISHED;
 
         Comment comment = Comment.builder()
                 .post(post)
@@ -57,11 +58,11 @@ public class CommentServiceImpl implements CommentService {
 
         comment = commentRepository.save(comment);
 
-        if (flagReason != null) {
+        if (moderation.shouldQueue()) {
             ModerationQueueItem queueItem = ModerationQueueItem.builder()
                     .targetType(TargetType.COMMENT)
                     .targetId(comment.getId())
-                    .reason(flagReason)
+                    .reason(moderation.getReasoning())
                     .flaggedBy(ReportSource.AI)
                     .status(ModerationQueueStatus.PENDING)
                     .build();

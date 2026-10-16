@@ -48,11 +48,24 @@ public class SecurityConfig {
                 .requestMatchers("/api/map/**").permitAll()
                 .requestMatchers("/api/journeys/track/**").permitAll() // token IS the credential, see JourneyController
 
-                // Admin-only
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
-                // Moderator + Admin
+                // Moderator + Admin - MUST be declared before the generic
+                // /api/admin/** catch-all below, since Spring Security's
+                // authorizeHttpRequests matches in order and the first match
+                // wins. (Found during integration review: the old broad rule
+                // was shadowing these, silently forcing them to ADMIN-only.)
                 .requestMatchers("/api/moderation/**").hasAnyRole("MODERATOR", "ADMIN")
+                .requestMatchers("/api/admin/incidents/**").hasAnyRole("MODERATOR", "ADMIN")
+                .requestMatchers("/api/admin/dashboard/**").hasAnyRole("MODERATOR", "ADMIN")
+                .requestMatchers("/api/analytics/**").hasAnyRole("MODERATOR", "ADMIN")
+
+                // Admin-only, more specific than the catch-all but listed here for clarity
+                .requestMatchers("/api/admin/users/**").hasRole("ADMIN")
+                .requestMatchers("/api/admin/audit-logs/**").hasRole("ADMIN")
+
+                // Safe default for any future /api/admin/** path not explicitly
+                // listed above: require ADMIN rather than silently falling
+                // through to "any authenticated user".
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                 // Security staff + Admin
                 .requestMatchers("/api/sos/manage/**").hasAnyRole("SECURITY_STAFF", "ADMIN")
